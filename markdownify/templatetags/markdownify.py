@@ -54,7 +54,8 @@ def legacy():
 
 
 @register.filter
-def markdownify(text, custom_settings="default"):
+def markdownify(text, custom_settings="default", dynamic_extension_config=None):
+    dynamic_extension_config = {} if dynamic_extension_config is None else dynamic_extension_config
 
     # Check for legacy settings
     setting_keys = [
@@ -91,6 +92,8 @@ def markdownify(text, custom_settings="default"):
     strip = markdownify_settings.get('STRIP', True)
     extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
     extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
+    for extension_name, extension_config in dynamic_extension_config.items():
+        extension_configs.setdefault(extension_name, {}).update(extension_config)
 
     # Bleach Linkify
     linkify = None
